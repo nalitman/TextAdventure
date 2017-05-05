@@ -18,6 +18,8 @@ public class Player
         {
             inventory.add(null);
         }
+        
+        //Add some if statements for easter egg user names
     }
     
     //Position Methods
@@ -107,6 +109,17 @@ public class Player
         z = c;
     }
     
+    //FINISH THIS
+    public Room currentRoom(Room[][] map)
+    {
+        for( int x = 0; x < map.length; x++)
+        {
+            for( int y = 0; y < map[x].length; y++)
+            {
+                for( int z = 0; z < map[x][y].length; z++)
+                {
+                    
+    
     //Player Status methods
     
     public String getName()
@@ -191,4 +204,32 @@ public class Player
             
         return status;
     }
+    
+    public String removeItem(String Iname)
+    {
+        String status = null;
+        boolean found = false;
+        
+        for(int k = 0; k < inventory.size(); k++)
+        {
+            if( Iname.toUpperCase.equals(inventory.get(k).getName()))
+            {
+                status = inventory.get(k).getName() + " removed";
+                found = true;
+            }
+            }
+            
+        if(found)
+            return status;
+            
+        else
+        {
+            status = Iname + " not in your inventory...";
+            return status;
+        }
+    }
+    
+    public Item dropItem(String Iname, Room room)
+    {
+        
 }
