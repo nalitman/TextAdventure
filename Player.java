@@ -1,18 +1,25 @@
 import java.util.*;
 public class Player
 {
-    private String name; private int x,y,z; private boolean isAlive;
-    private boolean isEquipped; private int health; private int maxHealth;
+    private String name;
+    private int x,y,z; 
+    private boolean isAlive;
+    private boolean isEquipped;
+    private int health; 
+    private int maxHealth;
     private Item equippedItem;
-    private ArrayList<Item> inventory = new ArrayList<Item>; private int inventoryMax;
+    private ArrayList<Item> inventory = new ArrayList<Item>();
+    private int inventoryMax;
+    private Room currentRoom;
     
-    public Player(String user)
+    public Player(String user, Room map[][][])
     {
-        name = username;    x = 0; y = 0; z = 0;
+        name = user;    x = 0; y = 0; z = 0;
         isAlive = true;     isEquipped = false;
         equippedItem = null;
         health = 100; maxHealth = 100;
         inventoryMax = 15;
+        currentRoom = map[0][0][0];
         
         for(int k = 0; k < 15; k++)
         {
@@ -26,52 +33,92 @@ public class Player
     
     public void moveNorth()
     {
-        y += 1;
+        if(currentRoom.canMoveNorth())
+        {
+            y += 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveSouth()
     {
-        y -= 1;
+        if(currentRoom.canMoveSouth())
+        {
+            y -= 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveEast()
     {
-        x += 1;
+        if(currentRoom.canMoveEast())
+        {
+            x += 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveWest()
     {
-        x -= 1;
+        if(currentRoom.canMoveWest())
+        {
+            x -= 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveNorthEast()
     {
-        x += 1; y += 1;
+        if(currentRoom.canMoveNorthEast())
+        {
+            x += 1; y += 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveNorthWest()
     {
-        x -= 1; y += ;
+        if(currentRoom.canMoveNorthWest())
+        {
+            x -= 1; y += 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveSouthEast()
     {
-        x += 1; y -= 1;
+        if(currentRoom.canMoveSouthEast())
+        {
+            x += 1; y -= 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveSouthWest()
     {
-        x -= 1; y -= 1;
+        if(currentRoom.canMoveSouthWest())
+        {
+            x -= 1; y -= 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveUp()
     {
-        z += 1;
+        if(currentRoom.canMoveUp())
+        {
+            z += 1;
+            setCurrentRoom();
+        }
     }
     
     public void moveDown()
     {
-        z -= 1;
+        if(currentRoom.canMoveDown())
+        {
+            z -= 1;
+            setCurrentRoom();
+        }
     }
     
     public int getX()
@@ -109,16 +156,32 @@ public class Player
         z = c;
     }
     
-    //FINISH THIS
-    public Room currentRoom(Room[][] map)
+    public Room getCurrentRoom(Room[][] map)
     {
+        return currentRoom;
+    }
+ 
+    public void setCurrentRoom()
+    {
+        boolean outOfBounds = true;
         for( int x = 0; x < map.length; x++)
         {
             for( int y = 0; y < map[x].length; y++)
             {
                 for( int z = 0; z < map[x][y].length; z++)
                 {
-                    
+                    if(getX() == map[x][y][z] && getY() == map[x][y][z] && getZ() == map[x][y][z])
+                    {
+                        ourOfBounds = false;
+                        currentRoom =  map[x][y][z];
+                    }
+                }
+            }
+        }
+        
+        if(outOfBounds)
+            System.out.println("Error: Player out of bounds!");
+        }
     
     //Player Status methods
     
@@ -150,11 +213,6 @@ public class Player
         else
             health += change;
             
-        return health;
-    }
-    
-    public int getHealth()
-    {
         return health;
     }
     
@@ -195,7 +253,7 @@ public class Player
             
         //If inventory is not full, add the item    
         if( isFull == false )
-        {   inventory.add(k, item);
+        {   inventory.set(k, item);
             status = item.getName() + "taken";
         }
             
@@ -205,31 +263,68 @@ public class Player
         return status;
     }
     
-    public String removeItem(String Iname)
+    public int findItem(String Iname)
     {
-        String status = null;
-        boolean found = false;
+        boolean found = false
+        int index;
         
         for(int k = 0; k < inventory.size(); k++)
         {
             if( Iname.toUpperCase.equals(inventory.get(k).getName()))
             {
-                status = inventory.get(k).getName() + " removed";
                 found = true;
+                index = k;
             }
-            }
-            
+        }
+        
         if(found)
-            return status;
+            return index;
             
         else
+            return -1;
+                
+    }
+    
+    public String removeItem(String Iname)
+    {
+        String status;
+        int index = findItem(Iname);
+        
+        if(index != -1)
         {
-            status = Iname + " not in your inventory...";
+            status = inventory.get(index).getName() + " removed!";
+            inventory.remove(index);
+            inventory.add(null);
+            return status;
+        }
+        
+        else
+        {
+            status = Iname + " not found...";
             return status;
         }
     }
     
-    public Item dropItem(String Iname, Room room)
+    public String dropItem(String Iname)
     {
+        String status;
+        int index = findItem(Iname);
+        
+        if(index != -1)
+        {
+            status = inventory.get(index).getName() + " dropped!";
+            currentRoom.addItem(inventory.get(index));
+            inventory.remove(index);
+            inventory.add(null);
+            return status;
+        }
+        
+        else
+        {
+            status = Iname + " not found...";
+            return status;
+        }
+    }
         
 }
+
