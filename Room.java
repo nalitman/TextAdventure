@@ -24,6 +24,9 @@ public class Room
        roomItems.add(item2);
        roomItems.add(item3);
        roomItems.add(item4);
+       
+       if(item1 != null)
+        description += "\nA " + item1.getName() + " lies on
    }
     
    public Room(int cx, int cy, int cz, String names, String desc, boolean n, boolean s, boolean e, boolean w,
