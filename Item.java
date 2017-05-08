@@ -1,33 +1,28 @@
 
-/**
- * Write a description of class Item here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class Item
 {
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class Item
-     */
-    public Item()
+    private String name, description, location;
+    
+    public Item(String n, String d, String l)
     {
-        // initialise instance variables
-        x = 0;
+        name = n;
+        description = d;
+        location = l;
     }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
+    
+    public String getName()
     {
-        // put your code here
-        return x + y;
+        return name;
+    }
+    
+    public String getDescription()
+    {
+        return description;
+    }
+    
+    public String getLocation()
+    {
+        return location;
     }
 }

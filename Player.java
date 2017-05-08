@@ -9,6 +9,7 @@ public class Player
     private int maxHealth;
     private Item equippedItem;
     private ArrayList<Item> inventory = new ArrayList<Item>();
+    private Room[][][] map;
     private int inventoryMax;
     private Room currentRoom;
     
@@ -19,6 +20,7 @@ public class Player
         equippedItem = null;
         health = 100; maxHealth = 100;
         inventoryMax = 15;
+        map = map;
         currentRoom = map[0][0][0];
         
         for(int k = 0; k < 15; k++)
@@ -151,7 +153,7 @@ public class Player
         y = c;
     }
     
-    public void setZ(int z)
+    public void setZ(int c)
     {
         z = c;
     }
@@ -170,9 +172,9 @@ public class Player
             {
                 for( int z = 0; z < map[x][y].length; z++)
                 {
-                    if(getX() == map[x][y][z] && getY() == map[x][y][z] && getZ() == map[x][y][z])
+                    if(getX() == map[x][y][z].getX() && getY() == map[x][y][z].getY() && getZ() == map[x][y][z].getZ())
                     {
-                        ourOfBounds = false;
+                        outOfBounds = false;
                         currentRoom =  map[x][y][z];
                     }
                 }
@@ -239,7 +241,7 @@ public class Player
     public String addItem(Item item)
     {
         boolean isFull = true;
-        int index;
+        int index = -1;
         String status;
         
         for(int k = 0; k < inventory.size(); k++)
@@ -252,8 +254,8 @@ public class Player
             }
             
         //If inventory is not full, add the item    
-        if( isFull == false )
-        {   inventory.set(k, item);
+        if( isFull == false && index != -1)
+        {   inventory.set(index, item);
             status = item.getName() + "taken";
         }
             
@@ -265,12 +267,12 @@ public class Player
     
     public int findItem(String Iname)
     {
-        boolean found = false
-        int index;
+        boolean found = false;
+        int index = 0;
         
         for(int k = 0; k < inventory.size(); k++)
         {
-            if( Iname.toUpperCase.equals(inventory.get(k).getName()))
+            if( Iname.toUpperCase().equals(inventory.get(k).getName().toUpperCase()))
             {
                 found = true;
                 index = k;
