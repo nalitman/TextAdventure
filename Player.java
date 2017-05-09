@@ -38,6 +38,7 @@ public class Player
     }
     
     //Position Methods
+    //CHANGE ALL SO THEY RETURN A STATUS STRING
     
     public void moveNorth()
     {
@@ -249,6 +250,7 @@ public class Player
         return gubs;
     }
     
+    //ADD CHECK FOR IF ITEM EVEN EXISTS
     public String addItem(Item item)
     {
         boolean isFull = true;
@@ -313,7 +315,7 @@ public class Player
         
         else
         {
-            status = Iname + " not found...";
+            status = "You have no such item...";
             return status;
         }
     }
