@@ -1,4 +1,6 @@
 import java.util.*;
+import java.lang.reflect.*;
+
 public class Player
 {
     private String name;
@@ -12,6 +14,8 @@ public class Player
     private Room[][][] map;
     private int inventoryMax;
     private Room currentRoom;
+    private int armor, attack;
+    //private Weapon eqWep;
     
     public Player(String user, Room map[][][])
     {
@@ -22,6 +26,8 @@ public class Player
         inventoryMax = 15;
         map = map;
         currentRoom = map[0][0][0];
+        armor = 0; attack = 1;
+        //eqWep = null;
         
         for(int k = 0; k < 15; k++)
         {
@@ -190,6 +196,11 @@ public class Player
     public String getName()
     {
         return name;
+    }
+    
+    public void setName(String n)
+    {
+        name = n;
     }
     
     public boolean checkLife()

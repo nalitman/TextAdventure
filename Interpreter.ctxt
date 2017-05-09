@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.params=player
+comment0.target=Interpreter(Player)
+comment1.params=
+comment1.target=java.lang.String\ thing()
+comment2.params=n
+comment2.target=void\ thing2(java.lang.String)
+comment3.params=args
+comment3.target=void\ main(java.lang.String[])
+numComments=4
