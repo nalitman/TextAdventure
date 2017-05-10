@@ -107,4 +107,21 @@ public class Room
         roomItems.add(item);
         description.addItem(item);
     }
+    
+    public void removeItem(Item item)
+    {
+        int index;
+        for(int k = 0; k < roomItems.size(); k++)
+        {
+            if(item.getName().equals(roomItems.get(k).getName()))
+            {
+                roomItems.remove(k);
+            }
+        }
+    }
+    
+    public ArrayList<Item> getItems()
+    {
+        return roomItems;
+    }
 }

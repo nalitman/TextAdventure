@@ -40,94 +40,124 @@ public class Player
     //Position Methods
     //CHANGE ALL SO THEY RETURN A STATUS STRING
     
-    public void moveNorth()
+    public String moveNorth()
     {
         if(currentRoom.canMoveNorth())
         {
             y += 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveSouth()
+    public String moveSouth()
     {
         if(currentRoom.canMoveSouth())
         {
             y -= 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveEast()
+    public String moveEast()
     {
         if(currentRoom.canMoveEast())
         {
             x += 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveWest()
+    public String moveWest()
     {
         if(currentRoom.canMoveWest())
         {
             x -= 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveNorthEast()
+    public String moveNorthEast()
     {
         if(currentRoom.canMoveNorthEast())
         {
             x += 1; y += 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveNorthWest()
+    public String moveNorthWest()
     {
         if(currentRoom.canMoveNorthWest())
         {
             x -= 1; y += 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveSouthEast()
+    public String moveSouthEast()
     {
         if(currentRoom.canMoveSouthEast())
         {
             x += 1; y -= 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveSouthWest()
+    public String moveSouthWest()
     {
         if(currentRoom.canMoveSouthWest())
         {
             x -= 1; y -= 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveUp()
+    public String moveUp()
     {
         if(currentRoom.canMoveUp())
         {
             z += 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
-    public void moveDown()
+    public String moveDown()
     {
         if(currentRoom.canMoveDown())
         {
             z -= 1;
             setCurrentRoom();
+            return currentRoom.getDescription();
         }
+        else
+            return "You cannot go that way...";
     }
     
     public int getX()
@@ -212,9 +242,10 @@ public class Player
             return false;
     }
     
-    public int getHealth()
+    public String getHealth()
     {
-        return health;
+        String h = "" + health;
+        return h;
     }
     
     public int changeHealth(int change)

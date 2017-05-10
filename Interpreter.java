@@ -41,12 +41,15 @@ public class Interpreter
         methods.put("TAKE", Player.class.getMethod("addItem"));
         methods.put("DROP", Player.class.getMethod("dropItem"));
         
+        //Player Health
+        methods.put("DIAGNOSE", Player.class.getMethod("getHealth"));
+        
         //Room Methods
         methods.put("LOOK", Room.class.getMethod("getDescription"));
     
     }
     
-    public String actionPerformed(String input) throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+    public String actionPerformed(String input, Room cRoom) throws SecurityException, NoSuchMethodException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException
     {
         String split = " ";
@@ -58,10 +61,43 @@ public class Interpreter
             
         else
         {
-            input1 = input.subString(0, index);
-            input2 = input.subString(index + 1);
+            input1 = input.substring(0, index);
+            input2 = input.substring(index + 1);
         }
         
+        if(input1.toUpperCase().equals("MOVE"))
+        {
+            try
+            {
+                return (String) methods.get(input2.toUpperCase()).invoke(user);
+            }
+            catch(NullPointerException e)
+            {
+                return "What?";
+            }   
+        }
+        
+        else if(input1.toUpperCase().equals("TAKE"))
+        {
+            int item = -1;
+            for(int k = 0; k < cRoom.getItems().size(); k++)
+            {
+                if(input2.toUpperCase().equals(cRoom.getItems().get(k).getName()))
+                {
+                    item = k;
+                }
+            }
+            
+            if(item != -1)
+            {
+                methods.get("TAKE").invoke(user);
+                cRoom.removeItem(cRoom.getItems().get(item));
+                //Change Description
+                return "Taken";
+            }
+            else
+                return "You see no such thing";
+        }
             
     }
      
