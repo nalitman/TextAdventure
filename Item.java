@@ -3,14 +3,16 @@ import java.lang.reflect.*;
 
 public class Item
 {
-    private String name, description, location;
+    private String name, description, location, attackMessage;
+    private int attackValue;
     
-    
-    public Item(String n, String d, String l)
+    public Item(String n, String d, String l, int a, String am)
     {
         name = n;
         description = d;
         location = l;
+        attackValue = a;
+        attackMessage = am;
     }
     
     public String getName()
@@ -26,5 +28,10 @@ public class Item
     public String getLocation()
     {
         return location;
+    }
+    
+    public String getCombatMessage()
+    {
+        return attackMessage
     }
 }

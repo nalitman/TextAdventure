@@ -37,7 +37,6 @@ public class Interpreter
         
         //Player Item managment methods
         methods.put("INVENTORY", Player.class.getMethod("getInventory"));
-        methods.put("NORTH", Player.class.getMethod("moveNorth"));
         methods.put("TAKE", Player.class.getMethod("addItem"));
         methods.put("DROP", Player.class.getMethod("dropItem"));
         
@@ -46,6 +45,9 @@ public class Interpreter
         
         //Room Methods
         methods.put("LOOK", Room.class.getMethod("getDescription"));
+        
+        //Combat
+        methods.put("ATTACK", Enemy.class.getMethod("combat"));
     
     }
     
@@ -73,7 +75,7 @@ public class Interpreter
             }
             catch(NullPointerException e)
             {
-                return "What?";
+                return "You want to move where?";
             }   
         }
         
@@ -90,7 +92,7 @@ public class Interpreter
             
             if(item != -1)
             {
-                methods.get("TAKE").invoke(user);
+                methods.get("TAKE").invoke(user, cRoom.getItems().get(item));
                 cRoom.removeItem(cRoom.getItems().get(item));
                 //Change Description
                 return "Taken";
@@ -98,6 +100,45 @@ public class Interpreter
             else
                 return "You see no such thing";
         }
+        
+        else if(input1.toUpperCase().equals("DROP"))
+        {
+            int item = -1;
+            for(int k = 0; k < user.getItems().size(); k++)
+            {
+                if(input2.toUpperCase().equals(user.getItems().get(k).getName()))
+                {
+                    item = k;
+                }
+            }
+            
+            if(item != -1)
+            {
+                methods.get("DROP").invoke(user, input2);
+                cRoom.addItem(user.getItems().get(item));
+                return "Dropped";
+            }
+            else
+                return "You hold no such thing";
+            }
+            
+        else if(input1.toUpperCase().equals("DIAGNOSE"))
+        {
+            return (String)methods.get("DIAGNOSE").invoke(user);
+        }
+        
+        else if(input1.toUpperCase().equals("LOOK"))
+        {
+            return (String)methods.get("LOOK").invoke(cRoom);
+        }
+        
+        else if(input1.toUpperCase().equals("ATTACK"))
+        {
+            return (String)methods.get("ATTACK").invoke(cRoom.getEnemy());
+        }
+        
+        else
+            return "What?";
             
     }
      

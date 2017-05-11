@@ -244,8 +244,26 @@ public class Player
     
     public String getHealth()
     {
-        String h = "" + health;
-        return h;
+        if(health == 100)
+            return "You are perfectly healthy!";
+        
+        else if( health >= 80 )
+            return "You are a bit banged up, but feeling ok!";
+            
+        else if(health >= 60)
+            return "You are in quite a bit of pain, but nothing that isn't manageable!";
+            
+        else if(health >= 40)
+            return "You won't last much longer if you keep this up...";
+            
+        else if(health >= 20)
+            return "You are struggling to keep yourself from passing out from fatigue...";
+            
+        else if(health > 0)
+            return "You are on the verge of death...";
+            
+        else
+            return "You seem to be rather dead...";
     }
     
     public int changeHealth(int change)
@@ -370,6 +388,11 @@ public class Player
             status = Iname + " not found...";
             return status;
         }
+    }
+    
+    public ArrayList<Item> getItems()
+    {
+        return inventory;
     }
         
 }

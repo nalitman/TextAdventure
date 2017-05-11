@@ -8,10 +8,11 @@ public class Room
    private RoomDesc description;
    private boolean north, south, east, west, Neast, Seast, Nwest, Swest, up, down;
    private ArrayList<Item> roomItems = new ArrayList<Item>();
+   private Enemy enemy;
    
    //Different constructors for # of items in room initially, max of four
    public Room(int cx, int cy, int cz, String names, RoomDesc desc, boolean n, boolean s, boolean e, boolean w,
-               boolean ne, boolean se, boolean nw, boolean sw, boolean u, boolean d, ArrayList<Item> stuff)
+               boolean ne, boolean se, boolean nw, boolean sw, boolean u, boolean d, ArrayList<Item> stuff, Enemy e)
    {
        x = cx; y = cy; z = cz;
        name = names;
@@ -19,8 +20,8 @@ public class Room
        north = n; south = s; east = e; west = w; Neast = ne; Seast = se; Nwest = nw; Swest = sw;
        up = u; down = d;
        roomItems = stuff;
-       
-   }
+       enemy = e;
+    }
    
    //Possible movement methods
    
