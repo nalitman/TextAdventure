@@ -39,6 +39,7 @@ public class Interpreter
         methods.put("INVENTORY", Player.class.getMethod("getInventory"));
         methods.put("TAKE", Player.class.getMethod("addItem"));
         methods.put("DROP", Player.class.getMethod("dropItem"));
+        methods.put("INSPECT", Item.class.getMethod("getDescription"));
         
         //Player Health
         methods.put("DIAGNOSE", Player.class.getMethod("getHealth"));
@@ -134,9 +135,42 @@ public class Interpreter
         
         else if(input1.toUpperCase().equals("ATTACK"))
         {
+            if(cRoom.getEnemy() == null)
+            {
+                return "Why would you want to attack that?";
+            }
             return (String)methods.get("ATTACK").invoke(cRoom.getEnemy());
         }
         
+        else if(input1.toUpperCase().equals("INSPECT"))
+        {
+            Item thing = null;
+            
+            for(int k = 0; k < user.getItems().size(); k++)
+            {
+                if( input2.toUpperCase().equals(user.getItems().get(k).getName() ))
+                    thing = user.getItems().get(k);
+                }
+        
+            if(thing = null)
+            {
+                for(int k = 0; k< cRoom.getItems().size(); k++)
+                {
+                    if( input2.toUpperCase().equals(cRoom.getItems().get(k).getName() ))
+                        thing = cRoom.getItems().get(k);
+                    }
+                }
+                
+            if(thing = null)
+            {
+                return "Inspect what?";
+            }
+            
+            else
+            {
+                return thing.getDescription();
+            }
+        }
         else
             return "What?";
             

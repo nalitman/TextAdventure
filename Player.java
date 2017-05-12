@@ -257,13 +257,18 @@ public class Player
             return "You won't last much longer if you keep this up...";
             
         else if(health >= 20)
-            return "You are struggling to keep yourself from passing out from fatigue...";
+            return "You are greivously wounded...";
             
         else if(health > 0)
             return "You are on the verge of death...";
             
         else
             return "You seem to be rather dead...";
+    }
+    
+    public int getHealthInt()
+    {
+        return health;
     }
     
     public int changeHealth(int change)

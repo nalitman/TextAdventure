@@ -4,15 +4,16 @@ import java.lang.reflect.*;
 public class Item
 {
     private String name, description, location, attackMessage;
-    private int attackValue;
+    private int attackValue,healthValue;
     
-    public Item(String n, String d, String l, int a, String am)
+    public Item(String n, String d, String l, int a, String am, int healing)
     {
         name = n;
         description = d;
         location = l;
         attackValue = a;
         attackMessage = am;
+        healthValue = healing;
     }
     
     public String getName()
@@ -30,8 +31,15 @@ public class Item
         return location;
     }
     
+    public int getAttack()
+    {
+        return attackValue;
+    }
+    
+    public String getHealth()
+    
     public String getCombatMessage()
     {
-        return attackMessage
+        return attackMessage;
     }
 }
