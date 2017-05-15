@@ -4,58 +4,46 @@ public class RoomDesc
 {
     private String body, itemInfo;
     private ArrayList<Item> items;
-    public RoomDesc(String desc, ArrayList<Item> stuff)
+    private Enemy enemy;
+    public RoomDesc(String desc, ArrayList<Item> stuff, Enemy e)
     {
         items = stuff;
         body  = desc;
         itemInfo = "";
+        enemy = e;
         
         for( int k = 0; k < items.size(); k++)
         {
-            itemInfo += "\nA" + items.get(k).getName() + " " + items.get(k).getLocation();
+            itemInfo += "\n" + items.get(k).getLocation();
         }
     }
     
     public void addItem(Item newItem)
     {
-        items.add(newItem);
-        itemInfo += "\nA" + newItem.getName() + " " + newItem.getLocation();
+        //items.add(newItem);
+        itemInfo += "\n" + newItem.getLocation();
     }
     
-    public void removeItem(String name)
+    public void removeItem()
     {
-        boolean found = false;
-        int index = -1;
+        itemInfo = "";
         
-        for(int k = 0; k < items.size(); k++)
+        for( int k = 0; k < items.size(); k++)
         {
-            if( name.toUpperCase().equals(items.get(k).getName().toUpperCase()))
-            {
-                found = true;
-                index = k;
-            }
-        }
-        
-        if(found && index != -1)
-        {   items.remove(index);
-            itemInfo = "";
-            for( int k = 0; k < items.size(); k++)
-            {
-                itemInfo += "\nA" + items.get(k).getName() + " " + items.get(k).getLocation();
-            }
+            itemInfo += "\n" + items.get(k).getLocation();
         }
     }
         
     public String getDescription()
     {
-        return body + itemInfo;
+        if (enemy == null)
+            return "\n" + body + "\n" + itemInfo;
+        else
+            return body + itemInfo + enemy.getDescription();
     }
     
     public void setBody(String nBody)
     {
         body = nBody;
     }
-
-        
-
 }

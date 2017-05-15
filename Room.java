@@ -6,21 +6,23 @@ public class Room
    private int x,y,z;
    private String name;
    private RoomDesc description;
-   private boolean north, south, east, west, Neast, Seast, Nwest, Swest, up, down;
+   private boolean north, south, east, west, up, down;
    private ArrayList<Item> roomItems = new ArrayList<Item>();
    private Enemy enemy;
+   private String key;
    
    //Different constructors for # of items in room initially, max of four
-   public Room(int cx, int cy, int cz, String names, RoomDesc desc, boolean n, boolean s, boolean e, boolean w,
-               boolean ne, boolean se, boolean nw, boolean sw, boolean u, boolean d, ArrayList<Item> stuff, Enemy e)
+   public Room(int cx, int cy, int cz, String names, String body, boolean n, boolean s, boolean e, boolean w,
+               boolean u, boolean d, ArrayList<Item> stuff, Enemy en, String k)
    {
        x = cx; y = cy; z = cz;
        name = names;
-       description = desc;
-       north = n; south = s; east = e; west = w; Neast = ne; Seast = se; Nwest = nw; Swest = sw;
+       north = n; south = s; east = e; west = w;
        up = u; down = d;
        roomItems = stuff;
-       enemy = e;
+       enemy = en;
+       key = k;
+       description = new RoomDesc(body, roomItems, enemy);
     }
    
    //Possible movement methods
@@ -44,26 +46,6 @@ public class Room
    {
        return west;
    }
-   
-   public boolean canMoveNorthEast()
-   {
-       return Neast;
-   }
-   
-   public boolean canMoveNorthWest()
-   {
-       return Nwest;
-    }
-    
-    public boolean canMoveSouthEast()
-    {
-        return Seast;
-    }
-    
-    public boolean canMoveSouthWest()
-    {
-        return Swest;
-    }
     
     public boolean canMoveUp()
     {
@@ -75,6 +57,26 @@ public class Room
         return down;
     }
     
+    public void open(String direction)
+    {
+        if(direction.toUpperCase().equals("NORTH") || direction.toUpperCase().equals("N"))
+            north = true;
+            
+        else if(direction.toUpperCase().equals("SOUTH") || direction.toUpperCase().equals("S"))
+            south = true;
+            
+        else if(direction.toUpperCase().equals("EAST") || direction.toUpperCase().equals("E"))
+            east = true;
+            
+        else if(direction.toUpperCase().equals("WEST") || direction.toUpperCase().equals("W"))
+            west = true;
+            
+        else if(direction.toUpperCase().equals("DOWN") || direction.toUpperCase().equals("D"))
+            down = true;
+            
+        else
+            System.out.println("ERROR: INVALID DIRECTION, NO KEY FOUND");
+        }
     //Get Room Coordinates
     
     public int getX()
@@ -111,18 +113,34 @@ public class Room
     
     public void removeItem(Item item)
     {
-        int index;
+        int index = -1;
         for(int k = 0; k < roomItems.size(); k++)
         {
             if(item.getName().equals(roomItems.get(k).getName()))
             {
-                roomItems.remove(k);
+                index = k;
+                break;
             }
+        }
+        if(index != -1)
+        {
+            roomItems.remove(index);
+            description.removeItem();
         }
     }
     
     public ArrayList<Item> getItems()
     {
         return roomItems;
+    }
+    
+    public Enemy getEnemy()
+    {
+        return enemy;
+    }
+    
+    public String getKey()
+    {
+        return key;
     }
 }

@@ -3,10 +3,8 @@ import java.lang.reflect.*;
 
 public class Player
 {
-    private String name;
     private int x,y,z; 
     private boolean isAlive;
-    private boolean isEquipped;
     private int health; 
     private int maxHealth;
     private Item equippedItem;
@@ -14,27 +12,26 @@ public class Player
     private Room[][][] map;
     private int inventoryMax;
     private Room currentRoom;
-    private int armor, attack;
+    private int attack, baseAttack;
     //private Weapon eqWep;
     
-    public Player(String user, Room map[][][])
+    public Player(Room[][][] rooms)
     {
-        name = user;    x = 0; y = 0; z = 0;
-        isAlive = true;     isEquipped = false;
+        x = 4; y = 12; z = 1;
+        isAlive = true;
         equippedItem = null;
         health = 100; maxHealth = 100;
         inventoryMax = 15;
-        map = map;
-        currentRoom = map[0][0][0];
-        armor = 0; attack = 1;
+        map = rooms;
+        currentRoom = map[4][12][1];
+        attack = 1;
+        baseAttack = 1;
         //eqWep = null;
         
         for(int k = 0; k < 15; k++)
         {
             inventory.add(null);
         }
-        
-        //Add some if statements for easter egg user names
     }
     
     //Position Methods
@@ -44,9 +41,9 @@ public class Player
     {
         if(currentRoom.canMoveNorth())
         {
-            y += 1;
+            this.y = this.y - 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -56,9 +53,9 @@ public class Player
     {
         if(currentRoom.canMoveSouth())
         {
-            y -= 1;
+            y += 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -70,7 +67,7 @@ public class Player
         {
             x += 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -82,55 +79,7 @@ public class Player
         {
             x -= 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
-        }
-        else
-            return "You cannot go that way...";
-    }
-    
-    public String moveNorthEast()
-    {
-        if(currentRoom.canMoveNorthEast())
-        {
-            x += 1; y += 1;
-            setCurrentRoom();
-            return currentRoom.getDescription();
-        }
-        else
-            return "You cannot go that way...";
-    }
-    
-    public String moveNorthWest()
-    {
-        if(currentRoom.canMoveNorthWest())
-        {
-            x -= 1; y += 1;
-            setCurrentRoom();
-            return currentRoom.getDescription();
-        }
-        else
-            return "You cannot go that way...";
-    }
-    
-    public String moveSouthEast()
-    {
-        if(currentRoom.canMoveSouthEast())
-        {
-            x += 1; y -= 1;
-            setCurrentRoom();
-            return currentRoom.getDescription();
-        }
-        else
-            return "You cannot go that way...";
-    }
-    
-    public String moveSouthWest()
-    {
-        if(currentRoom.canMoveSouthWest())
-        {
-            x -= 1; y -= 1;
-            setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -142,7 +91,7 @@ public class Player
         {
             z += 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -154,7 +103,7 @@ public class Player
         {
             z -= 1;
             setCurrentRoom();
-            return currentRoom.getDescription();
+            return "\n" + currentRoom.getDescription();
         }
         else
             return "You cannot go that way...";
@@ -195,44 +144,43 @@ public class Player
         z = c;
     }
     
-    public Room getCurrentRoom(Room[][] map)
+    public Room getCurrentRoom()
     {
         return currentRoom;
     }
  
     public void setCurrentRoom()
     {
-        boolean outOfBounds = true;
-        for( int x = 0; x < map.length; x++)
-        {
-            for( int y = 0; y < map[x].length; y++)
-            {
-                for( int z = 0; z < map[x][y].length; z++)
-                {
-                    if(getX() == map[x][y][z].getX() && getY() == map[x][y][z].getY() && getZ() == map[x][y][z].getZ())
-                    {
-                        outOfBounds = false;
-                        currentRoom =  map[x][y][z];
-                    }
-                }
-            }
-        }
+        boolean outOfBounds = false;
+        currentRoom = map[x][y][z];
         
         if(outOfBounds)
             System.out.println("Error: Player out of bounds!");
         }
-    
+        
+    public String unlock(String direction)
+    {
+        if(currentRoom.getKey() == null)
+            return "You can't be serious...";
+            
+        else
+        {
+            int index = findItem(currentRoom.getKey());
+            
+            if(index != -1)
+            {
+                currentRoom.open(direction);
+                Item thing = inventory.get(index);
+                removeItem(thing.getName());
+                return thing.use();
+            }
+            
+            else
+                return "You don't have the necessary item to get through";
+            }
+        }
+        
     //Player Status methods
-    
-    public String getName()
-    {
-        return name;
-    }
-    
-    public void setName(String n)
-    {
-        name = n;
-    }
     
     public boolean checkLife()
     {
@@ -266,13 +214,28 @@ public class Player
             return "You seem to be rather dead...";
     }
     
+    public String heal(Item item)
+    {
+        if(item != null)
+        {
+            if(item.getHealing() > 0)
+                return item.use() + "\n" + this.changeHealth(item.getHealing());
+            
+            else
+                return "You can't do that...";   
+        }
+        else
+            return "You have no such item";
+        }
+    
     public int getHealthInt()
     {
         return health;
     }
     
-    public int changeHealth(int change)
+    public String changeHealth(int change)
     {
+        int previous = health;
         if( (health + change) > maxHealth)
         {
             change = maxHealth - health;
@@ -281,7 +244,17 @@ public class Player
         else
             health += change;
             
-        return health;
+        if(health <= 0)
+        {   
+            isAlive = false;
+            return "You are dead";
+        }
+            
+        if(health >= previous)
+            return "You feel much better";
+            
+        else
+            return "That hurt";
     }
     
     //Inventory Management
@@ -296,7 +269,7 @@ public class Player
             if( inventory.get(k) != null )
             {
                 emptySpaces --;
-                gubs += "\n" + inventory.get(k);
+                gubs += "\n" + inventory.get(k).getName();
             }
         }
         
@@ -304,7 +277,6 @@ public class Player
         return gubs;
     }
     
-    //ADD CHECK FOR IF ITEM EVEN EXISTS
     public String addItem(Item item)
     {
         boolean isFull = true;
@@ -339,10 +311,11 @@ public class Player
         
         for(int k = 0; k < inventory.size(); k++)
         {
-            if( Iname.toUpperCase().equals(inventory.get(k).getName().toUpperCase()))
+            if( inventory.get(k) != null && Iname.toUpperCase().equals(inventory.get(k).getName().toUpperCase()))
             {
                 found = true;
                 index = k;
+                break;
             }
         }
         
@@ -399,6 +372,60 @@ public class Player
     {
         return inventory;
     }
+    
+    public String equip(String Iname)
+    {
+        int index = findItem(Iname);
         
+        if(index != -1)
+        {
+            if(inventory.get(index).getAttack() > 0)
+            {
+                equippedItem = inventory.get(index);
+                attack = baseAttack + equippedItem.getAttack();
+                return "Equipped";
+            }
+            
+            else
+                return "You can't equip that";    
+        }
+        
+        else
+            return "You want to equip what?";
+    }
+    
+    //Combat
+    public String attack(Enemy enemy)
+    {
+        if(enemy.lifeStatus() == true)
+        {
+            int miss = (int)(Math.random()*5);
+            if (miss != 1)
+            {
+                int damage = attack;
+                enemy.takeDamage(damage);
+                if(enemy.lifeStatus() == true)
+                {   if(equippedItem == null)
+                        return "You swing your fist, punching it hard, but it doesnt seem to do much";
+                    else
+                        return equippedItem.use();
+                    }
+                else
+                {
+                    if(equippedItem == null)
+                        return "You swing your first, punching it hard" + "\n" + enemy.getDescription();
+                    else
+                        return equippedItem.use() + "\n" + enemy.getDescription();
+                }
+            }
+            else
+            {
+                return ("You attack the " +  enemy.getName() + " but miss.");
+            }
+        }
+        
+        else
+            return "Hey chill out it's dead already!";
+    }
 }
 

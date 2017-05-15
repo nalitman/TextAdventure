@@ -4,18 +4,14 @@ import java.lang.reflect.*;
 public class Interpreter 
 {
     private String outputSTR, input1, input2;
-    private int outputNum;
-    private Item outputItem;
     private Map<String,Method> methods = new HashMap<String, Method>();
     private Player user;
-    
     
     public Interpreter(Player player) throws SecurityException, NoSuchMethodException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException
     {
         user = player;
         //Player movement methods
-        methods.put("NAME", Player.class.getMethod("getName"));
         methods.put("NORTH", Player.class.getMethod("moveNorth"));
         methods.put("N", Player.class.getMethod("moveNorth"));
         methods.put("SOUTH", Player.class.getMethod("moveSouth"));
@@ -26,20 +22,17 @@ public class Interpreter
         methods.put("W", Player.class.getMethod("moveWest"));
         methods.put("UP", Player.class.getMethod("moveUp"));
         methods.put("DOWN", Player.class.getMethod("moveDown"));
-        methods.put("NORTHEAST", Player.class.getMethod("moveNorthEast"));
-        methods.put("NE", Player.class.getMethod("moveNorthEast"));
-        methods.put("NORTHWEST", Player.class.getMethod("moveNorthWest"));
-        methods.put("NW", Player.class.getMethod("moveNorthWest"));
-        methods.put("SOUTHEAST", Player.class.getMethod("moveSouthEast"));
-        methods.put("SE", Player.class.getMethod("moveSouthEast"));
-        methods.put("SOUTHWEST", Player.class.getMethod("moveSouthWest"));
-        methods.put("SW", Player.class.getMethod("moveSouthWest"));
         
         //Player Item managment methods
         methods.put("INVENTORY", Player.class.getMethod("getInventory"));
-        methods.put("TAKE", Player.class.getMethod("addItem"));
-        methods.put("DROP", Player.class.getMethod("dropItem"));
+        methods.put("TAKE", Player.class.getMethod("addItem", Item.class));
+        methods.put("DROP", Player.class.getMethod("dropItem", String.class));
         methods.put("INSPECT", Item.class.getMethod("getDescription"));
+        methods.put("UNLOCK", Player.class.getMethod("unlock", String.class));
+        methods.put("EAT", Player.class.getMethod("heal", Item.class));
+        methods.put("DRINK", Player.class.getMethod("heal", Item.class));
+        methods.put("EQUIP", Player.class.getMethod("equip", String.class));
+        methods.put("READ", Item.class.getMethod("use"));
         
         //Player Health
         methods.put("DIAGNOSE", Player.class.getMethod("getHealth"));
@@ -48,7 +41,7 @@ public class Interpreter
         methods.put("LOOK", Room.class.getMethod("getDescription"));
         
         //Combat
-        methods.put("ATTACK", Enemy.class.getMethod("combat"));
+        methods.put("ATTACK", Player.class.getMethod("attack", Enemy.class));
     
     }
     
@@ -77,7 +70,12 @@ public class Interpreter
             catch(NullPointerException e)
             {
                 return "You want to move where?";
-            }   
+            }
+            
+            catch(InvocationTargetException e)
+            {
+                return e.getCause().toString();
+            }
         }
         
         else if(input1.toUpperCase().equals("TAKE"))
@@ -93,9 +91,11 @@ public class Interpreter
             
             if(item != -1)
             {
+                cRoom.getItems().get(item).setLocation("A " + cRoom.getItems().get(item).getName().toLowerCase() + " lies on the ground");
                 methods.get("TAKE").invoke(user, cRoom.getItems().get(item));
+                
                 cRoom.removeItem(cRoom.getItems().get(item));
-                //Change Description
+                cRoom.getDescription();
                 return "Taken";
             }
             else
@@ -107,16 +107,16 @@ public class Interpreter
             int item = -1;
             for(int k = 0; k < user.getItems().size(); k++)
             {
-                if(input2.toUpperCase().equals(user.getItems().get(k).getName()))
+                if(user.getItems().get(k) != null && input2.toUpperCase().equals(user.getItems().get(k).getName()))
                 {
                     item = k;
+                    break;
                 }
             }
             
             if(item != -1)
             {
                 methods.get("DROP").invoke(user, input2);
-                cRoom.addItem(user.getItems().get(item));
                 return "Dropped";
             }
             else
@@ -135,11 +135,11 @@ public class Interpreter
         
         else if(input1.toUpperCase().equals("ATTACK"))
         {
-            if(cRoom.getEnemy() == null)
+            if(cRoom.getEnemy() == null || input2.toUpperCase().equals(cRoom.getEnemy().getName()) == false)
             {
                 return "Why would you want to attack that?";
             }
-            return (String)methods.get("ATTACK").invoke(cRoom.getEnemy());
+            return (String)methods.get("ATTACK").invoke(user, cRoom.getEnemy());
         }
         
         else if(input1.toUpperCase().equals("INSPECT"))
@@ -149,10 +149,13 @@ public class Interpreter
             for(int k = 0; k < user.getItems().size(); k++)
             {
                 if( input2.toUpperCase().equals(user.getItems().get(k).getName() ))
+                {
                     thing = user.getItems().get(k);
+                    break;
+                }
                 }
         
-            if(thing = null)
+            if(thing == null)
             {
                 for(int k = 0; k< cRoom.getItems().size(); k++)
                 {
@@ -161,7 +164,7 @@ public class Interpreter
                     }
                 }
                 
-            if(thing = null)
+            if(thing == null)
             {
                 return "Inspect what?";
             }
@@ -171,37 +174,76 @@ public class Interpreter
                 return thing.getDescription();
             }
         }
+        
+        else if(input1.toUpperCase().equals("UNLOCK"))
+        {
+            return (String)methods.get("UNLOCK").invoke(user,input2);
+        }
+        
+        else if(input1.toUpperCase().equals("EAT") || input1.toUpperCase().equals("DRINK"))
+        {
+            int i = user.findItem(input2);
+            Item health = null;
+            
+            if(i != -1)
+            {
+                health = user.getItems().get(i);
+                
+                if(health != null)
+                    return (String)methods.get("EAT").invoke(user, health) + "\n" + user.removeItem(input2);
+                    
+                else
+                    return "You have no such item";
+            }
+            else
+                return "You have no such item";
+        }
+        
+        else if(input1.toUpperCase().equals("EQUIP"))
+        {
+            return (String)methods.get("EQUIP").invoke(user, input2);
+        }
+        
+        else if(input1.toUpperCase().equals("INVENTORY"))
+        {
+            return (String)methods.get("INVENTORY").invoke(user);
+        }
+        
+        else if(input1.toUpperCase().equals("READ"))
+        {
+            Item thing = null;
+            
+            for(int k = 0; k < user.getItems().size(); k++)
+            {
+                if( user.getItems().get(k) != null && input2.toUpperCase().equals(user.getItems().get(k).getName() ))
+                {
+                    thing = user.getItems().get(k);
+                    break;
+                }
+                }
+        
+            if(thing == null)
+            {
+                for(int k = 0; k< cRoom.getItems().size(); k++)
+                {
+                    if( input2.toUpperCase().equals(cRoom.getItems().get(k).getName() ))
+                        thing = cRoom.getItems().get(k);
+                    }
+                }
+                
+            if(thing == null)
+            {
+                return "Read what?";
+            }
+            
+            else
+            {
+                return thing.use();
+            }
+        }
+        
         else
             return "What?";
             
     }
-     
-public String thing()throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException
-{
-     outputSTR =  (String)methods.get("NAME").invoke(user);
-     return outputSTR;
-}
-
-public void thing2(String n) throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException
-{
-    methods.get("SET").invoke(user, n);
-}
-
-public static void main(String[] args) throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException
-{
-    Room map[][][] = new Room[1][1][1];
-    Player test = new Player("Nick", map);
-    
-    Interpreter t = new Interpreter(test);
-    System.out.print(t.thing());
-    
-    t.thing2("Jeb");
-    System.out.print(t.thing());
-    System.out.print(test.getName());
-    
-}
-
 }
