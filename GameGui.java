@@ -15,6 +15,8 @@ public class GameGui
         JPanel endP = new JPanel();
         JTextArea endT = new JTextArea(30,30);
         endT.setEditable(false);
+        endT.setLineWrap(true);
+        endT.setWrapStyleWord(true);
         endP.add(endT);
         
         //Sets up frame
@@ -100,7 +102,7 @@ public class GameGui
                             }
                         }
                         
-                        endT.setText("You survived!\n" + "You collected loot worth " + value + " gold!\n" + "QuestCo values your services!");
+                        endT.setText(player.getCurrentRoom().getDescription() +"\nYou survived!\n" + "You collected loot worth " + value + " gold!\n" + "QuestCo values your services!");
                         }
                         end.add(endP);
                         end.setVisible(true);
