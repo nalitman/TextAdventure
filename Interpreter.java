@@ -190,7 +190,11 @@ public class Interpreter
                 health = user.getItems().get(i);
                 
                 if(health != null)
-                    return (String)methods.get("EAT").invoke(user, health) + "\n" + user.removeItem(input2);
+                {   if(health.getHealing() > 0)
+                        return (String)methods.get("EAT").invoke(user, health) + "\n" + user.removeItem(input2);
+                    else
+                        return "You can't do that...";
+                    }
                     
                 else
                     return "You have no such item";

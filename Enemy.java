@@ -21,22 +21,22 @@ public class Enemy
         {
             int damage = -1 * (int)(Math.random() * ((this.attack + 10)-(this.attack - 10)));
             player.changeHealth(damage);
-            return (this.name + " hits you with a powerful blow!");
+            return ("\n" + this.name + " hits you with a powerful blow!");
         }
         else
         {
-            return (this.name + " attacked you but missed. ");
+            return ("\n" + this.name + " attacked you but missed. ");
         }
     }
     
     public void takeDamage(int damage)
     {
-        description = "An injured " + name.toLowerCase() + " stands clutching its wounds";
+        description = "\nAn injured " + name.toLowerCase() + " stands clutching its wounds";
         health -= damage;
         
         if(health <= 0)
         {
-            description = "The " + name.toLowerCase() + " lies dead on the ground";
+            description = "\nThe " + name.toLowerCase() + " lies dead on the ground";
             isAlive = false;
         }
     }

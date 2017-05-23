@@ -1,12 +1,13 @@
 #BlueJ class context
-comment0.params=desc\ stuff\ e
-comment0.target=RoomDesc(java.lang.String,\ java.util.ArrayList,\ Enemy)
-comment1.params=newItem
-comment1.target=void\ addItem(Item)
-comment2.params=
-comment2.target=void\ removeItem()
+comment0.target=RoomDesc
+comment1.params=desc\ stuff\ e
+comment1.target=RoomDesc(java.lang.String,\ java.util.ArrayList,\ Enemy)
+comment2.params=newItem
+comment2.target=void\ addItem(Item)
 comment3.params=
-comment3.target=java.lang.String\ getDescription()
-comment4.params=nBody
-comment4.target=void\ setBody(java.lang.String)
-numComments=5
+comment3.target=void\ removeItem()
+comment4.params=
+comment4.target=java.lang.String\ getDescription()
+comment5.params=nBody
+comment5.target=void\ setBody(java.lang.String)
+numComments=6
